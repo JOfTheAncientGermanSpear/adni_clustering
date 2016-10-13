@@ -2,15 +2,12 @@ using DataFrames
 
 loadRoiCols() = [Symbol(r) for r in readcsv("../data/select_rois.csv")[:] if r != "BL_ICV"]
 
-function loadRawData(raw_f, select_rois=true)
+function loadRawData(raw_f)
   data = readtable(raw_f)
 
-  if select_rois
-    roi_cols = loadRoiCols()
-    data = data[[:RID; roi_cols]]
-  end
+  roi_cols = loadRoiCols()
 
-  data
+  data[[:RID; :BL_DX_coded; :BL_ICV; roi_cols]]
 end
 
 
@@ -19,8 +16,7 @@ function loadData()
   data = readtable("../data/input_data_nas.csv")
 
   num_rows = size(data, 1)
-  rois = loadRoiCols()
-  na_rows = reduce(zeros(Bool, num_rows), rois) do acc, r
+  na_rows = reduce(zeros(Bool, num_rows), names(data)) do acc, r
     acc = acc | isna(data[r])
   end
 
@@ -42,4 +38,10 @@ function loadNormalizedData()
   end
 
   normalized_data
+end
+
+
+function loadPatients()
+  data = loadNormalizedData()
+  data[data[:BL_DX_coded] .== 1, :]
 end

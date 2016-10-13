@@ -4,9 +4,8 @@ using DataFrames
 include("loadData.jl")
 
 
-function runKmeans(n_clusters=4)
+function runKmeans(n_clusters=4, data=loadPatients())
   rois = loadRoiCols()
-  data = loadNormalizedData()
   kmeans(Matrix(data[rois])', n_clusters)
 end
 
@@ -20,17 +19,15 @@ function centersDf(y::KmeansResult)
 
   ret = DataFrame(roi = rois)
   for c in 1:size(centers, 2)
-    ret[Symbol("dim_", c)] = centers[:, c]
+    ret[Symbol("mean_", c)] = centers[:, c]
   end
 
   ret
 end
 
 
-function assignmentsDf(y::KmeansResult)
+function assignmentsDf(y::KmeansResult, rids=loadPatients()[:RID])
   assignments = y.assignments
-
-  rids = loadNormalizedData()[:RID]
 
   @assert length(rids) == length(assignments)
 
