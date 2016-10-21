@@ -78,3 +78,28 @@ function loadZscorePatients()
 
   data_patients_z
 end
+
+
+function editDistance(s1, s2, remove_punk=false)
+  if (remove_punk)
+    s1 = removeChars(s1, "-_'")
+    s2 = removeChars(s2, "-_'")
+  end
+  if (s1 == "")
+    length(s2)
+  elseif (s2 == "")
+    length(s1)
+  else
+    ins_w1 = 1 + editDistance(s1[1:end-1], s2)
+    ins_w2 = 1 + editDistance(s1, s2[1:end-1])
+    diag = editDistance(s1[1:end-1], s2[1:end-1])
+    if (s1[end] != s2[end])
+      diag += 2
+    end
+    
+    min(ins_w1, ins_w2, diag)
+  end
+end
+
+
+removeChars(orig, unwanted) = join("", [c for c in orig if !(c in unwanted)])
