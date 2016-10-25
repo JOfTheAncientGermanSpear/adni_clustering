@@ -1,6 +1,6 @@
 using DataFrames
 
-loadRoiCols() = [Symbol(r) for r in readcsv("../data/select_rois.csv")[:] if r != "BL_ICV"]
+loadRoiCols() = [Symbol(r) for r in readcsv("../data/rois/select_rois.csv")[:] if r != "BL_ICV"]
 
 function loadRawData(raw_f)
   data = readtable(raw_f)
@@ -96,7 +96,7 @@ function editDistance(s1, s2, remove_punk=false)
     if (s1[end] != s2[end])
       diag += 2
     end
-    
+
     min(ins_w1, ins_w2, diag)
   end
 end
